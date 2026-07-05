@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+error.log
+.env
+paper_preview.html
+/tmp/
