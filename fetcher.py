@@ -408,10 +408,12 @@ def fetch_and_rank():
 
     result = fresh[:TOP_N]
 
-    # 保存本次推送的论文
-    _save_sent_papers(result)
-
     return result
+
+
+def mark_as_sent(papers):
+    """标记论文为已推送（仅在成功发送后调用）"""
+    _save_sent_papers(papers)
 
 
 if __name__ == "__main__":

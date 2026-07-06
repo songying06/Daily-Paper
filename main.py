@@ -7,7 +7,7 @@
 
 import sys
 from datetime import datetime
-from fetcher import fetch_and_rank
+from fetcher import fetch_and_rank, mark_as_sent
 from mailer import build_html, send_email
 
 
@@ -46,6 +46,8 @@ def main():
     else:
         print("=== 发送邮件 ===")
         send_email(html)
+        # 仅在成功发送后标记为已推送
+        mark_as_sent(papers)
         print("Done!")
 
 
