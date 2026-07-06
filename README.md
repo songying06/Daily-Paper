@@ -13,15 +13,18 @@
 
 ## 部署到 GitHub
 
-### 1. 创建 GitHub 仓库
+### 1. 创建 GitHub 仓库并推送代码
 
-在 GitHub 上创建一个新仓库（推荐设为 **private** 以保护邮箱配置）:
-
+**方法 A — 使用 gh CLI（推荐）:**
 ```bash
+# 先安装 gh: https://cli.github.com/
+gh auth login
 gh repo create daily-paper-push --private --source . --remote origin --push
 ```
 
-或手动创建后:
+**方法 B — 手动创建:**
+1. 打开 https://github.com/new 创建新仓库（建议设为 **Private**）
+2. 创建后，在本地执行:
 ```bash
 git remote add origin https://github.com/YOUR_USERNAME/daily-paper-push.git
 git push -u origin master
