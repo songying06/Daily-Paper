@@ -1,4 +1,4 @@
-# config.py — 计算固体力学每日文献推送配置
+# config.py — JFM/JMPS/POF/CMAME 每日文献推送配置
 
 import os
 
@@ -6,48 +6,40 @@ import os
 SMTP_SERVER = "smtp.qq.com"
 SMTP_PORT = 465  # SSL
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "328161253@qq.com")
-# 授权码优先从环境变量读取（GitHub Secrets），否则使用默认值
 SENDER_AUTH_CODE = os.environ.get("SMTP_AUTH_CODE", "poqsytqsltvhcahj")
 RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "328161253@qq.com")
 
-# ====== arXiv 配置 ======
-ARXIV_CATEGORIES = ["cs.CE", "physics.comp-ph"]
-ARXIV_MAX_RESULTS = 30
-
-# ====== 期刊 RSS/Atom 源 ======
-JOURNAL_FEEDS = {
-    "CMAME": "https://rss.sciencedirect.com/publication/science/00457825",
-    "IJNME": "https://onlinelibrary.wiley.com/feed/10970207/most-recent",
-    "JMPS": "https://rss.sciencedirect.com/publication/science/00225096",
-    "Computational Mechanics": "https://link.springer.com/search.rss?facet-content-type=Article&facet-journal-id=466",
-    "IJSS": "https://rss.sciencedirect.com/publication/science/00207683",
+# ====== 目标期刊及其 ISSN ======
+TARGET_JOURNALS = {
+    "JFM":   {"name": "Journal of Fluid Mechanics",                      "issns": ["0022-1120", "1469-7645"]},
+    "JMPS":  {"name": "Journal of the Mechanics and Physics of Solids",  "issns": ["0022-5096"]},
+    "POF":   {"name": "Physics of Fluids",                               "issns": ["1070-6631", "1089-7666"]},
+    "CMAME": {"name": "Computer Methods in Applied Mechanics and Engineering", "issns": ["0045-7825"]},
 }
 
-# ====== 期刊权重 (影响因子参考) ======
-JOURNAL_WEIGHTS = {
-    "CMAME": 6.5,
-    "IJNME": 3.5,
-    "JMPS": 5.5,
-    "Computational Mechanics": 4.0,
-    "IJSS": 4.5,
-    "arXiv": 3.0,  # 预印本基础分
-}
-
-# ====== 关键词过滤（计算固体力学相关） ======
-KEYWORDS = [
-    "computational mechanics", "finite element", "material point method",
-    "peridynamics", "phase field", "cohesive zone", "fracture mechanics",
-    "isogeometric analysis", "meshfree", "multiscale", "topology optimization",
-    "damage mechanics", "plasticity", "contact mechanics", "solid mechanics",
-    "numerical simulation", "constitutive model", "discrete element",
-    "boundary element", "extended finite element", "XFEM", "FEM",
-    "computational solid mechanics", "nonlinear mechanics", "elastoplasticity",
-    "crack propagation", "finite deformation", "homogenization",
+# ====== 关键词分组（每组用于 OR 查询） ======
+KEYWORD_GROUPS = [
+    # 气泡
+    ["bubble dynamics", "cavitation bubble", "bubble collapse", "bubble pinch-off", "Taylor bubble"],
+    # SPH
+    ["smoothed particle hydrodynamics", "SPH method", "incompressible SPH", "weakly compressible SPH"],
+    # 物质点法
+    ["material point method", "MPM", "material point"],
+    # 近场动力学
+    ["peridynamics", "peridynamic", "bond-based peridynamics", "state-based peridynamics"],
+    # 爆炸冲击
+    ["explosion", "blast", "shock wave", "detonation", "impact loading", "high strain rate"],
 ]
 
-# ====== 每日推送篇数 ======
-TOP_N = 5
+# ====== 每个期刊选取论文数 ======
+PER_JOURNAL = 2  # 每个期刊2篇
+MAX_RESULTS = PER_JOURNAL * len(TARGET_JOURNALS)  # 共8篇
+
+# ====== CrossRef & OpenAlex API 配置 ======
+LOOKBACK_MONTHS = 12  # 放宽到12个月以保证各期刊都有结果
+CROSSREF_HEADERS = {"User-Agent": "DailyLitBot/1.0 (mailto:328161253@qq.com)"}
+OPENALEX_HEADERS = {"User-Agent": "mailto:328161253@qq.com"}
+S2_API_KEY = os.environ.get("S2_API_KEY", "s2k-Byr3HEhZOxk5Sstx9AoAszUNFuEdpB0FcjlneqOg")
 
 # ====== Claude API 翻译配置 ======
-# 复用当前会话的 API key
 TRANSLATION_ENABLED = True

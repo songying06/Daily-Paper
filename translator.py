@@ -20,19 +20,19 @@ def _log_error(msg):
 
 def translate_paper(paper):
     title = paper.get("title", "")
-    summary = paper.get("summary", "")
+    abstract = paper.get("abstract", "")
 
     if not title:
         return paper
 
     # Skip abstract translation if no meaningful abstract
-    has_abstract = summary and len(summary.strip()) > 30
-    abstract_line = f"\nAbstract: {summary[:800]}" if has_abstract else ""
+    has_abstract = abstract and len(abstract.strip()) > 30
+    abstract_line = f"\nAbstract: {abstract[:800]}" if has_abstract else ""
 
     prompt = f"""Translate the following academic paper title{" and abstract" if has_abstract else ""} into Chinese.
-Keep technical terms accurate (e.g., "Material Point Method" → "物质点法", "Cohesive Zone Model" → "内聚力模型", "Phase Field" → "相场法", "Finite Element Method" → "有限元法", "Peridynamics" → "近场动力学", "Isogeometric Analysis" → "等几何分析", "Topology Optimization" → "拓扑优化", "Multiscale" → "多尺度", "Fracture Mechanics" → "断裂力学", "Meshfree" → "无网格法").
+Keep technical terms accurate (e.g., "Bubble Dynamics" → "气泡动力学", "Cavitation" → "空化", "SPH" → "光滑粒子流体动力学", "Material Point Method" → "物质点法", "Peridynamics" → "近场动力学", "Explosion" → "爆炸", "Blast Wave" → "爆炸波", "Shock Wave" → "激波", "Impact" → "冲击", "High Strain Rate" → "高应变率").
 
-Return ONLY a JSON object with fields "title_cn" and "summary_cn". No markdown, no extra text.
+Return ONLY a JSON object with fields "title_cn" and "abstract_cn". No markdown, no extra text.
 
 Title: {title}
 {abstract_line}
@@ -67,14 +67,17 @@ Title: {title}
             if json_start >= 0 and json_end > json_start:
                 result = json.loads(text[json_start:json_end])
                 paper["title_cn"] = result.get("title_cn", "")
-                paper["summary_cn"] = result.get("summary_cn", "")
+                paper["abstract_cn"] = result.get("abstract_cn", "")
+                # Keep summary_cn for backward compatibility
+                if not paper.get("abstract_cn"):
+                    paper["abstract_cn"] = result.get("summary_cn", "")
         else:
             paper["title_cn"] = ""
-            paper["summary_cn"] = ""
+            paper["abstract_cn"] = ""
             _log_error(f"API status {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
         paper["title_cn"] = ""
-        paper["summary_cn"] = ""
+        paper["abstract_cn"] = ""
         print(f"[translate] error: {e}")
         _log_error(str(e))
 

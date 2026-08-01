@@ -1,4 +1,4 @@
-# main.py — 计算固体力学每日前沿文献推送
+# main.py — JFM/JMPS/POF/CMAME 每日文献推送
 #
 # 用法:
 #   python main.py           # 抓取 + 翻译 + 推送
@@ -31,7 +31,7 @@ def main():
     else:
         for p in papers:
             p["title_cn"] = ""
-            p["summary_cn"] = ""
+            p["abstract_cn"] = ""
 
     html = build_html(papers)
 

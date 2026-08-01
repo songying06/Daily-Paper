@@ -1,14 +1,17 @@
-# daily-paper-push — 计算固体力学每日前沿文献推送
+# daily-paper-push — JFM/JMPS/POF/CMAME 每日文献推送
 
-每天早上 7:00 (北京时间) 自动抓取 arXiv + CMAME + IJNME + JMPS + Computational Mechanics + IJSS 的最新文献，翻译标题和摘要后通过 QQ 邮箱推送。
+每天早上 7:00 (北京时间) 自动抓取 JFM + JMPS + Physics of Fluids + CMAME 的最新文献，翻译标题和摘要后通过 QQ 邮箱推送。
+
+**关键词方向**: 气泡动力学、SPH、物质点法、近场动力学、爆炸冲击
 
 ## 工作原理
 
-- **arXiv API**: 按关键词搜索最新预印本
-- **CrossRef API**: 抓取 Elsevier/Springer 期刊最新论文
-- **RSS/Atom**: 补充 Wiley (IJNME) 等平台的论文摘要
+- **CrossRef API**: 按期刊 ISSN 和关键词搜索最新论文
+- **OpenAlex API**: 补充论文摘要（含多来源 fallback）
+- **相关度过滤**: 计算标题和摘要与关键词组的匹配分数
+- **期刊均衡选取**: 每个期刊选 2 篇最相关的论文
 - **去重**: 自动记录已推送论文，每天推送的都是新论文
-- **翻译**: 使用 AI API 翻译标题和摘要为中文
+- **翻译**: 使用 DeepSeek API 翻译标题和摘要为中文
 - **云端运行**: 通过 GitHub Actions 定时执行，电脑关机也不影响
 
 ## 部署到 GitHub
@@ -45,15 +48,22 @@ git push -u origin master
 
 在仓库的 **Actions** 标签页，选择 **Daily Paper Push** workflow，点击 **Run workflow** 手动触发一次测试。
 
-## 禁用本地 Windows 定时任务（重要）
+## 目标期刊
 
-如果之前设置了 Windows Task Scheduler，请禁用以避免重复推送:
+| 期刊 | 全称 | ISSN |
+|------|------|------|
+| JFM | Journal of Fluid Mechanics | 0022-1120, 1469-7645 |
+| JMPS | Journal of the Mechanics and Physics of Solids | 0022-5096 |
+| POF | Physics of Fluids | 1070-6631, 1089-7666 |
+| CMAME | Computer Methods in Applied Mechanics and Engineering | 0045-7825 |
 
-```powershell
-Unregister-ScheduledTask -TaskName "DailyPaperPush" -Confirm:$false
-```
+## 关键词
 
-或在 `taskschd.msc` 中找到 "DailyPaperPush" 任务并禁用。
+- 气泡动力学: bubble dynamics, cavitation, bubble collapse
+- SPH: smoothed particle hydrodynamics, SPH method
+- 物质点法: material point method, MPM
+- 近场动力学: peridynamics, bond-based/state-based
+- 爆炸冲击: explosion, blast, shock wave, impact loading
 
 ## 本地运行
 
